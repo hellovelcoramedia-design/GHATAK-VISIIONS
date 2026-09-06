@@ -1,0 +1,52 @@
+'use client';
+
+import { useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowUpRight, ChevronDown, Menu, X, Play, Instagram, Phone, MessageCircle } from 'lucide-react';
+import { siteConfig, logoWhite, showreel, whatsappUrl, telUrl } from '@/lib/site-config';
+
+const reveal = { hidden: { opacity: 0, y: 35 }, visible: { opacity: 1, y: 0, transition: { duration: .8, ease: [.16, 1, .3, 1] } } };
+
+function Media({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
+  return <div className={`media ${className}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.62)), url(${src})` }} role="img" aria-label={alt} />;
+}
+
+function Navbar({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) {
+  const links = ['WORK', 'SERVICES', 'ABOUT', 'CONTACT'];
+  return <header className="nav"><a className="brand" href="#top"><img src={logoWhite} alt={siteConfig.brand} onError={(e) => { e.currentTarget.style.display = 'none'; }} /><span>{siteConfig.brand}</span></a><nav className="desktop-nav">{links.map(x => <a key={x} href={`#${x.toLowerCase()}`}>{x}</a>)}<a className="nav-cta" href="#contact">BOOK A SHOOT <ArrowUpRight size={15}/></a></nav><button className="menu-btn" onClick={() => setOpen(!open)} aria-label="Toggle menu">{open ? <X/> : <Menu/>}</button>{open && <div className="mobile-menu">{links.map(x => <a key={x} href={`#${x.toLowerCase()}`} onClick={() => setOpen(false)}>{x}</a>)}<a className="nav-cta" href={whatsappUrl}>BOOK YOUR SHOOT <ArrowUpRight size={16}/></a></div>}</header>;
+}
+
+export default function Home() {
+  const [menu, setMenu] = useState(false); const [playing, setPlaying] = useState(false);
+  const { scrollYProgress } = useScroll(); const heroY = useTransform(scrollYProgress, [0, .25], [0, 130]);
+  return <main id="top">
+    <Navbar open={menu} setOpen={setMenu}/>
+    <section className="hero"><motion.div className="hero-media" style={{ y: heroY }} /><div className="hero-vignette"/><div className="hero-copy"><motion.p variants={reveal} initial="hidden" animate="visible" className="eyebrow">{siteConfig.hero.eyebrow}</motion.p><motion.h1 variants={reveal} initial="hidden" animate="visible" transition={{ delay: .1 }}>{siteConfig.hero.title[0]}<br/><em>{siteConfig.hero.title[1]}</em></motion.h1><motion.p variants={reveal} initial="hidden" animate="visible" transition={{ delay: .2 }} className="hero-desc">{siteConfig.hero.description}</motion.p><motion.div variants={reveal} initial="hidden" animate="visible" transition={{ delay: .3 }} className="actions"><a className="button button-light" href="#contact">BOOK YOUR SHOOT <ArrowUpRight size={17}/></a><a className="button button-line" href="#work">EXPLORE OUR WORK <ArrowUpRight size={17}/></a></motion.div></div><div className="scroll-note"><span>SCROLL TO EXPLORE</span><ChevronDown size={17}/></div></section>
+
+    <section className="intro section" id="about"><motion.div className="intro-title" variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true }}><span>01 / THE VISION</span><h2>YOUR MOMENT<br/><i>DESERVES MORE</i><br/>THAN A VIDEO.</h2></motion.div><motion.div className="intro-body" variants={reveal} initial="hidden" whileInView="visible" viewport={{ once: true }}><p>We create cinematic visual stories designed to make important moments unforgettable.</p><p className="muted">From the handover of a dream car to a room full of people you love, every frame is built with intention — not simply recorded.</p></motion.div></section>
+
+    <section className="services section" id="services"><div className="section-head"><span>02 / WHAT WE CREATE</span><h2>BUILT FOR <i>THE MOMENT.</i></h2></div><div className="service-list">{siteConfig.services.map((s, i) => <motion.article className="service" key={s.number} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} transition={{ delay: i*.08 }}><Media src={s.image} alt={s.title}/><div className="service-overlay"><span>{s.number} — {s.label}</span><h3>{s.title}</h3><p>{s.description}</p><a href="#contact">EXPLORE <ArrowUpRight size={15}/></a></div></motion.article>)}</div></section>
+
+    <section className="work section" id="work"><div className="section-head"><span>03 / SELECTED WORK</span><h2>FRAMES THAT <i>STAY.</i></h2></div><div className="portfolio">{siteConfig.portfolio.map((p, i) => <motion.article className={`project p${i}`} key={p.title} initial={{ opacity: 0, scale: .97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}><Media src={p.image} alt={p.title}/><div className="project-meta"><span>{p.category} · {p.location} · {p.year}</span><h3>{p.title}</h3><p>{p.description}</p><a href="#contact">VIEW PROJECT <ArrowUpRight size={15}/></a></div></motion.article>)}</div></section>
+
+    <section className="showreel section"><div className="reel-wrap" onClick={() => setPlaying(true)}><Media src="/images/hero.jpg" alt="GHATAK VISION showreel"/><div className="reel-center"><span>04 / SHOWREEL</span><button aria-label="Play showreel"><Play fill="currentColor" size={22}/></button><h2>WATCH<br/><i>THE VISION.</i></h2></div></div></section>
+
+    <section className="auto section"><div className="auto-copy"><span>05 / AUTOMOTIVE</span><h2>YOUR NEW CAR.<br/><i>YOUR FIRST FILM.</i></h2><p>BMW. Mercedes. Audi. Toyota. Mahindra. Porsche. Luxury SUVs. Superbikes. We make the handover feel as significant as the machine itself.</p><a className="button button-light" href="#contact">BOOK A DELIVERY FILM <ArrowUpRight size={17}/></a></div><div className="auto-image"><Media src="/images/car-02.jpg" alt="Luxury automotive cinematography"/></div></section>
+
+    <section className="principles section"><div className="section-head"><span>06 / WHY GHATAK VISION</span><h2>PRECISION <i>WITH FEELING.</i></h2></div><div className="principle-grid">{[['CINEMATIC','We don’t simply record moments. We build visual stories.'],['DETAIL','Every frame, movement and sound is intentionally crafted.'],['EMOTION','The goal isn’t just beautiful footage. It’s making you feel something.'],['PREMIUM','Professional presentation from first contact to final delivery.']].map(([a,b],i)=><motion.div key={a} variants={reveal} initial="hidden" whileInView="visible" viewport={{once:true}}><span>0{i+1}</span><h3>{a}</h3><p>{b}</p></motion.div>)}</div></section>
+
+    <section className="process section"><div className="section-head"><span>07 / THE PROCESS</span><h2>FROM IDEA <i>TO FILM.</i></h2></div><div className="steps">{[['01','CONNECT','Tell us what you’re planning.'],['02','PLAN','We develop the visual approach.'],['03','SHOOT','Our team captures the moment.'],['04','DELIVER','You receive a polished cinematic film.']].map(([n,t,d])=><div className="step" key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></div>)}</div></section>
+
+    <section className="stories section"><div className="section-head"><span>08 / CLIENT STORIES</span><h2>WORDS FROM <i>THE FRAME.</i></h2></div><div className="testimonial"><span>TESTIMONIAL PLACEHOLDER</span><blockquote>“Add a genuine customer review here. We never publish fabricated testimonials.”</blockquote><p>Verified client story · Replace in <code>lib/site-config.ts</code></p></div></section>
+
+    <section className="instagram section"><div className="section-head"><span>09 / SOCIAL</span><h2>FOLLOW <i>THE VISION.</i></h2></div><div className="ig-grid">{['/images/car-01.jpg','/images/birthday-01.jpg','/images/event-01.jpg','/images/reel-01.jpg'].map((x,i)=><Media key={x} src={x} alt={`GHATAK VISION social work ${i+1}`}/>)}</div><a className="ig-link" href={`https://instagram.com/${siteConfig.instagram}`} target="_blank" rel="noreferrer"><Instagram size={17}/> @{siteConfig.instagram} <ArrowUpRight size={15}/></a></section>
+
+    <section className="contact section" id="contact"><div><span>10 / LET’S MAKE SOMETHING</span><h2>HAVE A MOMENT<br/><i>WORTH REMEMBERING?</i></h2><p>Let’s turn it into cinema.</p></div><div className="contact-actions"><a className="button button-light" href={whatsappUrl}><MessageCircle size={18}/> WHATSAPP / {siteConfig.phone}</a><a className="button button-line" href={telUrl}><Phone size={17}/> CALL DIRECT</a></div></section>
+
+    <section className="form-section section"><div className="section-head"><span>11 / ENQUIRE</span><h2>START <i>THE STORY.</i></h2></div><form className="enquiry" action={whatsappUrl}><label>NAME<input name="name" required placeholder="Your name"/></label><label>PHONE<input name="phone" required placeholder="+91"/></label><label>EMAIL<input name="email" type="email" placeholder="you@email.com"/></label><label>SHOOT TYPE<select name="type" defaultValue=""><option value="" disabled>Select a service</option>{siteConfig.services.map(s=><option key={s.label}>{s.title}</option>)}</select></label><label>PREFERRED DATE<input name="date" type="date"/></label><label>LOCATION<input name="location" placeholder="Mumbai / venue"/></label><label className="full">MESSAGE<textarea name="message" rows={4} placeholder="Tell us about the moment..."/></label><button className="button button-light full" type="submit">SEND ENQUIRY <ArrowUpRight size={17}/></button></form></section>
+
+    <footer className="footer"><div><div className="footer-brand">{siteConfig.brand}</div><p>{siteConfig.tagline}<br/>{siteConfig.location}</p></div><div className="footer-links"><a href="#work">WORK</a><a href="#services">SERVICES</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></div><div className="footer-contact"><a href={`https://instagram.com/${siteConfig.instagram}`}>Instagram</a><a href={whatsappUrl}>WhatsApp</a><a href={telUrl}>{siteConfig.phone}</a></div><div className="copyright">© 2026 {siteConfig.brand}. All Rights Reserved.</div></footer>
+    <div className="mobile-bar"><a href={whatsappUrl}><MessageCircle size={16}/> WHATSAPP</a><a href={telUrl}><Phone size={16}/> CALL</a><a href="#contact">BOOK NOW</a></div>
+    {playing && <div className="modal" onClick={() => setPlaying(false)}><button className="modal-close" onClick={() => setPlaying(false)}><X/></button><video src={showreel} controls autoPlay playsInline onClick={e => e.stopPropagation()} /></div>}
+  </main>;
+}
